@@ -125,7 +125,7 @@ def save_to_csv(data, file_path):
     df.to_csv(file_path, index=False)
 
 
-def max_ads(url)
+def max_ads(url):
     response = requests.get(url)
     response.raise_for_status()
     soup = BeautifulSoup(response.text, "html.parser")

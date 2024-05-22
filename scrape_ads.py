@@ -99,9 +99,12 @@ def scrapeAds(url, min_price, max_price):
 
 def save_to_csv(data, file_path):
     df = pd.DataFrame(data)
-    if os.path.exists(file_path):
-        existing_df = pd.read_csv(file_path)
-        df = pd.concat([existing_df, df]).drop_duplicates().reset_index(drop=True)
+    if os.path.exists(file_path) and os.path.getsize(file_path) > 0:
+        try:
+            existing_df = pd.read_csv(file_path)
+            df = pd.concat([existing_df, df]).drop_duplicates().reset_index(drop=True)
+        except pd.errors.EmptyDataError:
+            pass  # The file is empty, so we'll just save the new data
     df.to_csv(file_path, index=False)
 
 url = 'https://hardverapro.hu/aprok/notebook/pc/index.html?offset='

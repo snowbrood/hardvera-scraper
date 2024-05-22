@@ -157,14 +157,14 @@ def main(offset):
     max_num = max_ads(base_url)
     offset = int(offset)
     while offset <= max_num:
-    url = f"{base_url}{offset}"
-    ads = scrapeAds(url, min_price, max_price)
-    if not ads:  # Stop if no more ads are found
-        print(f"No ads found at offset {offset}. Stopping.")
-        break
-    all_ads.extend(ads)
-    print(f"Scraped {len(ads)} ads from {url}")
-    offset += 50
+        url = f"{base_url}{offset}"
+        ads = scrapeAds(url, min_price, max_price)
+        if not ads:  # Stop if no more ads are found
+            print(f"No ads found at offset {offset}. Stopping.")
+            break
+        all_ads.extend(ads)
+        print(f"Scraped {len(ads)} ads from {url}")
+        offset += 50
     # Calculate current hash of the scraped data
     current_hash = get_hash(all_ads)
     hash_file_path = 'data_hash.txt'

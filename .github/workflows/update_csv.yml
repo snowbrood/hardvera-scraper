@@ -28,12 +28,12 @@ jobs:
     - name: Run scraping script
       run: python scrape_ads.py
 
-    - name: Commit changes
+    - name: Commit and push changes
+      env:
+        PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
       run: |
         git config --global user.name 'github-actions'
         git config --global user.email 'github-actions@github.com'
         git add data.csv
         git commit -m 'Update CSV file'
-        git push
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        git push https://x-access-token:${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/${{ github.repository }}.git HEAD:main

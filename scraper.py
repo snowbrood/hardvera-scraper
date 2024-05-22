@@ -6,6 +6,8 @@ from bs4 import BeautifulSoup
 import pandas as pd
 import os
 import sys
+import hashlib
+
 
 def getURLParams(url):
     parsed_url = urllib.parse.urlparse(url)

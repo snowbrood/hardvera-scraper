@@ -171,7 +171,7 @@ def main(offset):
     # save_to_csv(all_ads, temp_filename)
     while offset < max_num:
         url = f"{base_url}{offset}"
-        # ads = scrapeAds(url, min_price, max_price)
+        ads = scrapeAds(url, min_price, max_price)
         if not ads:  # Stop if no more ads are found
             print(f"No ads found at offset {offset}. Stopping.")
             break

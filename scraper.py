@@ -146,12 +146,13 @@ def main(offset):
     all_ads = []
 
     offset = int(offset)
+    temp_filename = f"temp_{offset}.csv"
     if offset == 3000:
         max_num = max_ads(base_url)
     else:
         max_num = offset + 200
 
-    while offset <= max_num:
+    while offset < max_num:
         url = f"{base_url}{offset}"
         ads = scrapeAds(url, min_price, max_price)
         if not ads:  # Stop if no more ads are found
@@ -162,7 +163,7 @@ def main(offset):
         offset += 50
     # Save to a unique file per offset
     if all_ads:
-        temp_filename = f"temp_{offset}.csv"
+        # temp_filename = f"temp_{offset}.csv"
         save_to_csv(all_ads, temp_filename)
     else:
         print("No ads found in this range.")

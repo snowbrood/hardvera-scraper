@@ -6,28 +6,10 @@ from bs4 import BeautifulSoup
 import pandas as pd
 import os
 import time
-import hashlib
 
-LOCK_FILE = 'update.lock'
-HASH_FILE = 'data_hash.txt'
 CSV_FILE = 'data.csv'
 
-def get_hash(data):
-    """Generate a hash for the given data."""
-    data_str = str(data)
-    return hashlib.sha256(data_str.encode('utf-8')).hexdigest()
 
-def load_previous_hash(file_path):
-    """Load the previous hash from a file."""
-    if os.path.exists(file_path):
-        with open(file_path, 'r') as file:
-            return file.read().strip()
-    return None
-
-def save_current_hash(file_path, current_hash):
-    """Save the current hash to a file."""
-    with open(file_path, 'w') as file:
-        file.write(current_hash)
 
 def getURLParams(url):
     parsed_url = urllib.parse.urlparse(url)
@@ -127,39 +109,11 @@ def scrapeAds(url, min_price, max_price):
         file.write(current_hash)
 
 def save_to_csv(data, file_path):
+    """ Save the scraped data to a CSV file. """
     df = pd.DataFrame(data)
-    changes_made = False
-    if os.path.exists(file_path) and os.path.getsize(file_path) > 0:
-        try:
-            existing_df = pd.read_csv(file_path)
-            combined_df = pd.concat([existing_df, df]).drop_duplicates().reset_index(drop=True)
-            changes_made = not combined_df.equals(existing_df)
-            combined_df.to_csv(file_path, index=False)
-        except pd.errors.EmptyDataError:
-            df.to_csv(file_path, index=False)
-            changes_made = True
-    else:
-        df.to_csv(file_path, index=False)
-        changes_made = True
-    
+    df.to_csv(file_path, index=False)
     print(f"Saved {len(df)} rows to {file_path}")
-    return changes_made
 
-def create_lock():
-    with open(LOCK_FILE, 'w') as lock_file:
-        lock_file.write('locked')
-
-def remove_lock():
-    if os.path.exists(LOCK_FILE):
-        os.remove(LOCK_FILE)
-
-def is_locked():
-    return os.path.exists(LOCK_FILE)
-
-def wait_for_lock():
-    while is_locked():
-        print("Waiting for lock to be released...")
-        time.sleep(5)
 
 def max_ads(url):
     response = requests.get(url)
@@ -205,28 +159,20 @@ def main(offset):
         all_ads.extend(ads)
         print(f"Scraped {len(ads)} ads from {url}")
         offset += 50
-
+    # Save to a unique file per offset
     if all_ads:
-        current_hash = get_hash(all_ads)
-        previous_hash = load_previous_hash(HASH_FILE)
-
-        if current_hash != previous_hash:
-            wait_for_lock()
-            create_lock()
-            try:
-                if save_to_csv(all_ads, CSV_FILE):
-                    save_current_hash(HASH_FILE, current_hash)
-            finally:
-                remove_lock()
-        else:
-            print("No new data found.")
+        temp_filename = f"temp_{offset}.csv"
+        save_to_csv(all_ads, temp_filename)
     else:
         print("No ads found in this range.")
 
 
 if __name__ == "__main__":
-    import sys
     if len(sys.argv) != 2:
         print("Usage: python scraper.py <offset>")
     else:
-        main(sys.argv[1])
+        try:
+            offset = int(sys.argv[1])
+            main(offset)
+        except ValueError:
+            print("Invalid offset. Please provide a numeric offset.")

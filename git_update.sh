@@ -12,7 +12,7 @@ BRANCH_NAME="update-$(date +%s)-${RANDOM}"
 git checkout -b $BRANCH_NAME
 
 # Add changes to the CSV file
-git add data.csv
+git add final_results.csv
 
 # Commit the changes
 git commit -m "Update CSV file"

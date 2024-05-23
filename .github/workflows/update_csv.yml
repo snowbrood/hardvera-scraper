@@ -30,9 +30,9 @@ jobs:
           python -m pip install --upgrade pip
           pip install requests beautifulsoup4 pandas
 
-      - name: Run scraper
+      - name: Run scraper and save to temp file
         run: |
-          python scraper.py ${{ matrix.offset }}
+          python scraper.py ${{ matrix.offset }} > temp_${{ matrix.offset }}.csv
 
       - name: Make git_update.sh executable
         run: chmod +x git_update.sh
@@ -41,3 +41,24 @@ jobs:
         env:
           PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
         run: ./git_update.sh
+
+  consolidate:
+    needs: scrape  # This ensures it runs after all scrape jobs are done
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Consolidate results
+        run: |
+          echo "" > data.csv  # Ensure file is empty before appending
+          for offset in 0 200 400 600 800 1000 1200 1400 1600 1800 2000 2200 2400 2600 2800 3000; do
+            cat temp_$offset.csv >> final_results.csv
+          done
+
+      - name: Commit and push consolidated results
+        env:
+          PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
+        run: |
+          chmod +x git_update.sh
+          ./git_update.sh

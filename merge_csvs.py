@@ -4,7 +4,7 @@ import glob
 def merge_csv_files(output_file, input_files_pattern):
     csv_files = glob.glob(input_files_pattern)
     df_list = []
-    
+
     for file in csv_files:
         try:
             df = pd.read_csv(file, encoding='utf-8')
@@ -18,10 +18,12 @@ def merge_csv_files(output_file, input_files_pattern):
                 print(f"Successfully read {file} with latin-1 encoding")
             except Exception as e:
                 print(f"Skipping file {file} due to read error: {e}")
+        except pd.errors.ParserError as e:
+            print(f"Skipping file {file} due to parsing error: {e}")
 
     if df_list:
         merged_df = pd.concat(df_list, ignore_index=True)
-        merged_df.to_csv(output_file, index=False)
+        merged_df.to_csv(output_file, index=False, encoding='utf-8')
         print(f"Saved merged CSV to {output_file}")
     else:
         print("No valid CSV files found to merge.")

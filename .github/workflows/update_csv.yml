@@ -11,9 +11,7 @@ jobs:
   scrape:
     strategy:
       matrix:
-        # offset: [0, 200, 400, 800, 1000, 2500, 3000]  # Define your offsets here
         offset: [0, 200, 400, 600, 800, 1000, 1200, 1400, 1600, 1800, 2000, 2200, 2400, 2600, 2800, 3000]
-
     runs-on: ubuntu-latest
 
     steps:
@@ -43,25 +41,41 @@ jobs:
       - name: List files
         run: ls -l
 
-
   consolidate:
-    needs: scrape  # This ensures it runs after all scrape jobs are done
+    needs: scrape
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Download temp files
-        uses: actions/download-artifact@v2
-        with:
-          name: temp-file-${{ matrix.offset }}
-          
-      - name: Consolidate results
+      - name: List all artifacts
+        id: list-artifacts
         run: |
-          # echo "" > data.csv  # Ensure file is empty before appending
-          for offset in 0 200 400 600 800 1000 1200 1400 1600 1800 2000 2200 2400 2600 2800 3000; do
-            cat temp_$offset.csv >> final_results.csv
-          done
+          echo "Listing all artifacts"
+          curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            https://api.github.com/repos/${{ github.repository }}/actions/artifacts | jq -r '.artifacts[] | select(.name | startswith("temp-file-")) | .name' > artifact_names.txt
+          cat artifact_names.txt
+
+      - name: Download all artifacts
+        run: |
+          mkdir artifacts
+          while IFS= read -r artifact; do
+            echo "Downloading $artifact"
+            gh run download $artifact --dir artifacts
+          done < artifact_names.txt
+
+      - name: Sort and list artifact files
+        run: |
+          ls artifacts/temp_*.csv | sort -t '_' -k 2 -n > sorted_files.txt
+          cat sorted_files.txt
+
+      - name: Consolidate results into data.csv
+        run: |
+          echo "" > data.csv  # Ensure file is empty before appending
+          while IFS= read -r file; do
+            cat "$file" >> data.csv
+          done < sorted_files.txt
 
       - name: Commit and push consolidated results
         env:
@@ -69,3 +83,6 @@ jobs:
         run: |
           chmod +x git_update.sh
           ./git_update.sh
+
+
+

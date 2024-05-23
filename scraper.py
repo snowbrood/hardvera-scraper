@@ -108,23 +108,23 @@ def scrapeAds(url, min_price, max_price):
 
 def save_to_csv(data, file_path):
     try:
-        # Create DataFrame
         df = pd.DataFrame(data)
-
         if not df.empty:
-            # Convert all string data to UTF-8 to avoid encoding issues
             for column in df.select_dtypes(include=[object]).columns:
                 df[column] = df[column].apply(lambda x: x.encode('utf-8', errors='ignore').decode('utf-8') if isinstance(x, str) else x)
             
-            # Save DataFrame to CSV
-            df.to_csv(file_path, index=False, encoding='utf-8')
+            csv_file_path = file_path.replace('.zip', '.csv')
+            df.to_csv(csv_file_path, index=False, encoding='utf-8')
+
+            with zipfile.ZipFile(file_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
+                zipf.write(csv_file_path, os.path.basename(csv_file_path))
+            os.remove(csv_file_path)
+            
             print(f"Saved {len(df)} rows to {file_path}")
         else:
             print(f"No data to save for {file_path}")
-        sys.stdout.flush()
     except Exception as e:
         print(f"Error saving to CSV: {e}")
-        sys.stdout.flush()
 
 
 
@@ -158,48 +158,46 @@ def main(offset):
     all_ads = []
 
     offset = int(offset)
-    temp_filename = f"temp_{offset}.csv"
+    temp_filename = f"temp_{offset}.zip"
     if offset == 3000:
         max_num = max_ads(base_url)
     else:
         max_num = offset + 200
     
-    # all_ads = [
-    #     {"id": 1, "name": "Ad 1", "price": 100, "link": "http://example.com/1"},
-    #     {"id": 2, "name": "Ad 2", "price": 200, "link": "http://example.com/2"},
-    #     {"id": 3, "name": "Ad 3", "price": 300, "link": "http://example.com/3"}]
-    # save_to_csv(all_ads, temp_filename)
-    while offset < max_num:
-        url = f"{base_url}{offset}"
-        ads = scrapeAds(url, min_price, max_price)
-        if not ads:  # Stop if no more ads are found
-            print(f"No ads found at offset {offset}. Stopping.")
-            break
-        all_ads.extend(ads)
-        print(f"Scraped {len(ads)} ads from {url}")
-        offset += 50
-    # Save to a unique file per offset
-    if all_ads:
-        # temp_filename = f"temp_{offset}.csv"
-        save_to_csv(all_ads, temp_filename)
-    else:
-        print("No ads found in this range.")
+    all_ads = [
+        {"id": 1, "name": "Ad 1", "price": 100, "link": "http://example.com/1"},
+        {"id": 2, "name": "Ad 2", "price": 200, "link": "http://example.com/2"},
+        {"id": 3, "name": "Ad 3", "price": 300, "link": "http://example.com/3"}]
+    save_to_csv(all_ads, temp_filename)
+
+
+    # while offset < max_num:
+    #     url = f"{base_url}{offset}"
+    #     ads = scrapeAds(url, min_price, max_price)
+    #     if not ads:  # Stop if no more ads are found
+    #         print(f"No ads found at offset {offset}. Stopping.")
+    #         break
+    #     all_ads.extend(ads)
+    #     print(f"Scraped {len(ads)} ads from {url}")
+    #     offset += 50
+    # # Save to a unique file per offset
+    # if all_ads:
+    #     # temp_filename = f"temp_{offset}.csv"
+    #     save_to_csv(all_ads, temp_filename)
+    # else:
+    #     print("No ads found in this range.")
 
 
 
 if __name__ == "__main__":
     print(f"Arguments received: {sys.argv}")
-    sys.stdout.flush()
     if len(sys.argv) != 2:
         print("Usage: python scraper.py <offset>")
-        sys.stdout.flush()
     else:
         try:
             raw_offset = sys.argv[1]
             print(f"Raw offset: '{raw_offset}'")
-            sys.stdout.flush()
             offset = int(raw_offset.strip())
             main(offset)
         except ValueError as e:
             print(f"Invalid offset. Please provide a numeric offset. Error: {e}")
-            sys.stdout.flush()

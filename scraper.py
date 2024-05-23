@@ -152,7 +152,7 @@ def main(offset):
     else:
         max_num = offset + 200
     
-    all_ads = '6550136,Dell gyári 19.5V 6.7A / 130W AC Adapter,https://hardverapro.hu/apro/dell_gyari_19_5v_6_7a_130w_ac_adapter_9/hsz_1-50.html,5 000 Ft,III. kerület, 2024-05-10 11:10,kutipepe'
+    all_ads = '1,2,3,4,5,6'
     save_to_csv(all_ads, temp_filename)
     # while offset < max_num:
     #     url = f"{base_url}{offset}"

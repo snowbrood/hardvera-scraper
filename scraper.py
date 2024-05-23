@@ -155,7 +155,7 @@ def main(offset):
     base_url = 'https://hardverapro.hu/aprok/notebook/pc/index.html?offset='
     min_price = 0
     max_price = 9999
-    # all_ads = []
+    all_ads = []
 
     offset = int(offset)
     temp_filename = f"temp_{offset}.csv"
@@ -164,26 +164,26 @@ def main(offset):
     else:
         max_num = offset + 200
     
-    all_ads = [
-        {"id": 1, "name": "Ad 1", "price": 100, "link": "http://example.com/1"},
-        {"id": 2, "name": "Ad 2", "price": 200, "link": "http://example.com/2"},
-        {"id": 3, "name": "Ad 3", "price": 300, "link": "http://example.com/3"}]
-    save_to_csv(all_ads, temp_filename)
-    # while offset < max_num:
-    #     url = f"{base_url}{offset}"
-    #     # ads = scrapeAds(url, min_price, max_price)
-    #     if not ads:  # Stop if no more ads are found
-    #         print(f"No ads found at offset {offset}. Stopping.")
-    #         break
-    #     all_ads.extend(ads)
-    #     print(f"Scraped {len(ads)} ads from {url}")
-    #     offset += 50
-    # # Save to a unique file per offset
-    # if all_ads:
-    #     # temp_filename = f"temp_{offset}.csv"
-    #     save_to_csv(all_ads, temp_filename)
-    # else:
-    #     print("No ads found in this range.")
+    # all_ads = [
+    #     {"id": 1, "name": "Ad 1", "price": 100, "link": "http://example.com/1"},
+    #     {"id": 2, "name": "Ad 2", "price": 200, "link": "http://example.com/2"},
+    #     {"id": 3, "name": "Ad 3", "price": 300, "link": "http://example.com/3"}]
+    # save_to_csv(all_ads, temp_filename)
+    while offset < max_num:
+        url = f"{base_url}{offset}"
+        # ads = scrapeAds(url, min_price, max_price)
+        if not ads:  # Stop if no more ads are found
+            print(f"No ads found at offset {offset}. Stopping.")
+            break
+        all_ads.extend(ads)
+        print(f"Scraped {len(ads)} ads from {url}")
+        offset += 50
+    # Save to a unique file per offset
+    if all_ads:
+        # temp_filename = f"temp_{offset}.csv"
+        save_to_csv(all_ads, temp_filename)
+    else:
+        print("No ads found in this range.")
 
 
 

@@ -93,6 +93,9 @@ jobs:
       - name: Install pandas
         run: |
           python -m pip install pandas
+      - name: Empty final_results.csv
+        run: |
+          echo "" > final_results.csv
       - name: Merge CSV files
         run: |
           python merge_csvs.py final_results.csv 'artifacts/temp_*.csv'

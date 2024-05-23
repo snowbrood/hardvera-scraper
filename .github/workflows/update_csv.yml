@@ -58,6 +58,8 @@ jobs:
           cat artifact_names.txt
 
       - name: Download all artifacts
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           mkdir artifacts
           while IFS= read -r artifact; do
@@ -72,9 +74,9 @@ jobs:
 
       - name: Consolidate results into data.csv
         run: |
-          echo "" > data.csv  # Ensure file is empty before appending
+          echo "" > final_results.csv  # Ensure file is empty before appending
           while IFS= read -r file; do
-            cat "$file" >> data.csv
+            cat "$file" >> final_results.csv
           done < sorted_files.txt
 
       - name: Commit and push consolidated results

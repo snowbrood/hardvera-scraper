@@ -107,12 +107,24 @@ def scrapeAds(url, min_price, max_price):
         file.write(current_hash)
 
 def save_to_csv(data, file_path):
-    df = pd.DataFrame(data)
-    if not df.empty:
-        df.to_csv(file_path, index=False)
-        print(f"Saved {len(df)} rows to {file_path}")
-    else:
-        print(f"No data to save for {file_path}")
+    try:
+        # Create DataFrame
+        df = pd.DataFrame(data)
+
+        if not df.empty:
+            # Convert all string data to UTF-8 to avoid encoding issues
+            for column in df.select_dtypes(include=[object]).columns:
+                df[column] = df[column].apply(lambda x: x.encode('utf-8', errors='ignore').decode('utf-8') if isinstance(x, str) else x)
+            
+            # Save DataFrame to CSV
+            df.to_csv(file_path, index=False, encoding='utf-8')
+            print(f"Saved {len(df)} rows to {file_path}")
+        else:
+            print(f"No data to save for {file_path}")
+        sys.stdout.flush()
+    except Exception as e:
+        print(f"Error saving to CSV: {e}")
+        sys.stdout.flush()
 
 
 
@@ -155,9 +167,7 @@ def main(offset):
     all_ads = [
         {"id": 1, "name": "Ad 1", "price": 100, "link": "http://example.com/1"},
         {"id": 2, "name": "Ad 2", "price": 200, "link": "http://example.com/2"},
-        {"id": 3, "name": "Ad 3", "price": 300, "link": "http://example.com/3"},
-        # Add more ads here
-    ]
+        {"id": 3, "name": "Ad 3", "price": 300, "link": "http://example.com/3"}]
     save_to_csv(all_ads, temp_filename)
     # while offset < max_num:
     #     url = f"{base_url}{offset}"

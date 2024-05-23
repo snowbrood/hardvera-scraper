@@ -34,13 +34,6 @@ jobs:
         run: |
           python scraper.py ${{ matrix.offset }} > temp_${{ matrix.offset }}.csv
 
-      - name: Make git_update.sh executable
-        run: chmod +x git_update.sh
-
-      - name: Commit and push changes
-        env:
-          PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
-        run: ./git_update.sh
 
   consolidate:
     needs: scrape  # This ensures it runs after all scrape jobs are done

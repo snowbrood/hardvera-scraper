@@ -30,6 +30,7 @@ jobs:
 
       - name: Run scraper and save to temp file
         run: |
+          echo "Running scraper with offset ${{ matrix.offset }}"
           python scraper.py ${{ matrix.offset }}
 
       - name: Upload temp file

@@ -172,6 +172,7 @@ def main(offset):
 
 
 if __name__ == "__main__":
+    print(f"Arguments received: {sys.argv}")
     if len(sys.argv) != 2:
         print("Usage: python scraper.py <offset>")
     else:

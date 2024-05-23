@@ -6,9 +6,7 @@ from bs4 import BeautifulSoup
 import pandas as pd
 import os
 import time
-
-CSV_FILE = 'data.csv'
-
+import sys 
 
 
 def getURLParams(url):

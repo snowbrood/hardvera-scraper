@@ -89,13 +89,13 @@ jobs:
         run: |
           ls artifacts/temp_*.csv | sort -t '_' -k 2 -n > sorted_files.txt
           cat sorted_files.txt
-
-      - name: Consolidate results into data.csv
+          
+      - name: Install pandas
         run: |
-          echo "" > final_results.csv  # Ensure file is empty before appending
-          while IFS= read -r file; do
-            cat "$file" >> final_results.csv
-          done < sorted_files.txt
+          python -m pip install pandas
+      - name: Merge CSV files
+        run: |
+          python merge_csvs.py final_results.csv 'artifacts/temp_*.csv'
 
       - name: Commit and push consolidated results
         env:

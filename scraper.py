@@ -171,13 +171,20 @@ def main(offset):
     #     print("No ads found in this range.")
 
 
+
 if __name__ == "__main__":
     print(f"Arguments received: {sys.argv}")
+    sys.stdout.flush()
     if len(sys.argv) != 2:
         print("Usage: python scraper.py <offset>")
+        sys.stdout.flush()
     else:
         try:
-            offset = int(sys.argv[1])
+            raw_offset = sys.argv[1]
+            print(f"Raw offset: '{raw_offset}'")
+            sys.stdout.flush()
+            offset = int(raw_offset.strip())
             main(offset)
-        except ValueError:
-            print("Invalid offset. Please provide a numeric offset.")
+        except ValueError as e:
+            print(f"Invalid offset. Please provide a numeric offset. Error: {e}")
+            sys.stdout.flush()

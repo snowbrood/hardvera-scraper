@@ -152,7 +152,12 @@ def main(offset):
     else:
         max_num = offset + 200
     
-    all_ads = '1,2,3,4,5,6'
+    all_ads = [
+        {"id": 1, "name": "Ad 1", "price": 100, "link": "http://example.com/1"},
+        {"id": 2, "name": "Ad 2", "price": 200, "link": "http://example.com/2"},
+        {"id": 3, "name": "Ad 3", "price": 300, "link": "http://example.com/3"},
+        # Add more ads here
+    ]
     save_to_csv(all_ads, temp_filename)
     # while offset < max_num:
     #     url = f"{base_url}{offset}"

@@ -143,7 +143,7 @@ def main(offset):
     base_url = 'https://hardverapro.hu/aprok/notebook/pc/index.html?offset='
     min_price = 0
     max_price = 9999
-    all_ads = []
+    # all_ads = []
 
     offset = int(offset)
     temp_filename = f"temp_{offset}.csv"
@@ -151,22 +151,24 @@ def main(offset):
         max_num = max_ads(base_url)
     else:
         max_num = offset + 200
-
-    while offset < max_num:
-        url = f"{base_url}{offset}"
-        ads = scrapeAds(url, min_price, max_price)
-        if not ads:  # Stop if no more ads are found
-            print(f"No ads found at offset {offset}. Stopping.")
-            break
-        all_ads.extend(ads)
-        print(f"Scraped {len(ads)} ads from {url}")
-        offset += 50
-    # Save to a unique file per offset
-    if all_ads:
-        # temp_filename = f"temp_{offset}.csv"
-        save_to_csv(all_ads, temp_filename)
-    else:
-        print("No ads found in this range.")
+    
+    all_ads = '6550136,Dell gyári 19.5V 6.7A / 130W AC Adapter,https://hardverapro.hu/apro/dell_gyari_19_5v_6_7a_130w_ac_adapter_9/hsz_1-50.html,5 000 Ft,III. kerület, 2024-05-10 11:10,kutipepe'
+    save_to_csv(all_ads, temp_filename)
+    # while offset < max_num:
+    #     url = f"{base_url}{offset}"
+    #     # ads = scrapeAds(url, min_price, max_price)
+    #     if not ads:  # Stop if no more ads are found
+    #         print(f"No ads found at offset {offset}. Stopping.")
+    #         break
+    #     all_ads.extend(ads)
+    #     print(f"Scraped {len(ads)} ads from {url}")
+    #     offset += 50
+    # # Save to a unique file per offset
+    # if all_ads:
+    #     # temp_filename = f"temp_{offset}.csv"
+    #     save_to_csv(all_ads, temp_filename)
+    # else:
+    #     print("No ads found in this range.")
 
 
 if __name__ == "__main__":

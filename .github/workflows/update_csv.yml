@@ -57,12 +57,13 @@ jobs:
             https://api.github.com/repos/${{ github.repository }}/actions/artifacts | jq -r '.artifacts[] | select(.name | startswith("temp-file-")) | .name' > artifact_names.txt
           cat artifact_names.txt
 
-      - name: Download all artifacts
-        uses: actions/download-artifact@v2
-        with:
-          name: temp-file-*
-          path: artifacts
-
+      # - name: Download all artifacts
+      #   uses: actions/download-artifact@v2
+      #   with:
+      #     name: temp-file-*
+      #     path: artifacts
+      - name: Download all workflow run artifacts
+        uses: actions/download-artifact@v4
       # - name: Download all artifacts
       #   env:
       #     GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

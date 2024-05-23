@@ -58,14 +58,20 @@ jobs:
           cat artifact_names.txt
 
       - name: Download all artifacts
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          mkdir artifacts
-          while IFS= read -r artifact; do
-            echo "Downloading $artifact"
-            gh run download $artifact --dir artifacts
-          done < artifact_names.txt
+        uses: actions/download-artifact@v2
+        with:
+          name: temp-file-*
+          path: artifacts
+
+      # - name: Download all artifacts
+      #   env:
+      #     GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   run: |
+      #     mkdir artifacts
+      #     while IFS= read -r artifact; do
+      #       echo "Downloading $artifact"
+      #       gh run download $artifact --dir artifacts
+      #     done < artifact_names.txt
 
       - name: Sort and list artifact files
         run: |

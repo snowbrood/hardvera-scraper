@@ -93,9 +93,11 @@ jobs:
       - name: Install pandas
         run: |
           python -m pip install pandas
-      - name: Empty final_results.csv
+          
+      - name: Delete final_results.csv if it exists
         run: |
-          echo "" > final_results.csv
+          if [ -f final_results.csv ]; then rm final_results.csv; fi
+
       - name: Merge CSV files
         run: |
           python merge_csvs.py final_results.csv 'artifacts/temp_*.csv'

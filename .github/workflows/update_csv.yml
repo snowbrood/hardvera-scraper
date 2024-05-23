@@ -33,13 +33,10 @@ jobs:
         run: |
           python scraper.py ${{ matrix.offset }}
 
+      - name: Make git_update.sh executable
+        run: chmod +x git_update.sh
+        
       - name: Commit and push changes
         env:
           PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
-        run: |
-          git config --global user.name 'github-actions'
-          git config --global user.email 'github-actions@github.com'
-          git add data.csv
-          git commit -m 'Update CSV file'
-          git pull --rebase https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/${{ github.repository }}.git main
-          git push https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/${{ github.repository }}.git HEAD:main
+        run: ./git_update.sh

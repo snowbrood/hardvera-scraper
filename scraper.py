@@ -107,10 +107,13 @@ def scrapeAds(url, min_price, max_price):
         file.write(current_hash)
 
 def save_to_csv(data, file_path):
-    """ Save the scraped data to a CSV file. """
     df = pd.DataFrame(data)
-    df.to_csv(file_path, index=False)
-    print(f"Saved {len(df)} rows to {file_path}")
+    if not df.empty:
+        df.to_csv(file_path, index=False)
+        print(f"Saved {len(df)} rows to {file_path}")
+    else:
+        print(f"No data to save for {file_path}")
+
 
 
 def max_ads(url):

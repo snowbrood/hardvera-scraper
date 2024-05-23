@@ -62,12 +62,20 @@ jobs:
       #   with:
       #     name: temp-file-*
       #     path: artifacts
-      - name: Download all workflow run artifacts
-        uses: actions/download-artifact@v4
-        with:
-          merge-multiple: true
-      - name: Display structure of downloaded files
-        run: ls -R      
+      - name: Download all artifacts
+        run: |
+          mkdir -p artifacts
+          for offset in 0 200 400 600 800 1000 1200 1400 1600 1800 2000 2200 2400 2600 2800 3000; do
+            echo "Downloading artifact for offset $offset"
+            curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+                 -H "Accept: application/vnd.github.v3+json" \
+                 -o artifacts/temp_$offset.zip \
+                 https://api.github.com/repos/${{ github.repository }}/actions/artifacts/$(curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+                 -H "Accept: application/vnd.github.v3+json" \
+                 https://api.github.com/repos/${{ github.repository }}/actions/artifacts | jq -r --arg NAME "temp-file-$offset" '.artifacts[] | select(.name == $NAME) | .archive_download_url')
+            unzip -d artifacts artifacts/temp_$offset.zip
+            rm artifacts/temp_$offset.zip
+          done   
         # - name: Download all artifacts
       #   env:
       #     GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

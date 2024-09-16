@@ -4,23 +4,30 @@
 git config --global user.name "github-actions"
 git config --global user.email "github-actions@github.com"
 
-# Fetch latest changes from the remote
+# Fetch the latest changes from remote
 git fetch origin main
 
 # Stash any unstaged changes if they exist
-git stash
+git stash --include-untracked
 
 # Create a temporary branch for the update
 BRANCH_NAME="update-$(date +%s)-${RANDOM}"
 git checkout -b $BRANCH_NAME
 
-# Add changes to the CSV file
-git add final_results.csv
+# Check if final_results.csv exists before adding
+if [ -f final_results.csv ]; then
+    # Add changes to the CSV file
+    git add final_results.csv
+    # Commit the changes
+    git commit -m "Update CSV file"
+else
+    echo "final_results.csv does not exist. Skipping add/commit."
+fi
 
-# Commit the changes
-git commit -m "Update CSV file"
+# Add any other untracked files like artifacts, sorted_files.txt, etc.
+git add .
 
-# Rebase the temporary branch onto the latest main branch
+# Rebase onto the latest main branch
 git pull --rebase https://x-access-token:${PAT_TOKEN}@github.com/${GITHUB_REPOSITORY}.git main
 
 # Push the changes to the temporary branch

@@ -75,7 +75,7 @@ jobs:
                   | jq -r --arg NAME "temp-file-$offset" '.artifacts[] | select(.name == $NAME) | .archive_download_url' \
                   | xargs -I {} curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" -L -o artifacts/temp_$offset.zip {}
 
-
+          done
         # - name: Download all artifacts
       #   env:
       #     GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -63,7 +63,7 @@ jobs:
       #   with:
       #     name: temp-file-*
       #     path: artifacts
-      - name: Download artifacts
+      - name: Download and check artifacts
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -71,10 +71,17 @@ jobs:
           for offset in 0 200 400 600 800 1000 1200 1400 1600 1800 2000 2200 2400 2600 2800 3000; do
             echo "Downloading artifact for offset $offset"
             gh api -H "Accept: application/vnd.github.v3+json" \
-                  "/repos/${{ github.repository }}/actions/artifacts" \
-                  | jq -r --arg NAME "temp-file-$offset" '.artifacts[] | select(.name == $NAME) | .archive_download_url' \
-                  | xargs -I {} curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" -L -o artifacts/temp_$offset.zip {}
-          done 
+              "/repos/${{ github.repository }}/actions/artifacts" \
+              | jq -r --arg NAME "temp-file-$offset" '.artifacts[] | select(.name == $NAME) | .archive_download_url' \
+              | xargs -I {} curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" -L -o artifacts/temp_$offset.zip
+            if file artifacts/temp_$offset.zip | grep -q "Zip archive"; then
+              echo "Artifact $offset is valid"
+            else
+              echo "Error: Artifact $offset is not a valid zip file"
+              exit 1
+            fi
+          done
+
         # - name: Download all artifacts
       #   env:
       #     GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

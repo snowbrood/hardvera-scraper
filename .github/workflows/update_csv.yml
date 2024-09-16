@@ -16,10 +16,10 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: 3.x
 
@@ -34,7 +34,7 @@ jobs:
           python scraper.py ${{ matrix.offset }}
 
       - name: Upload temp file
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: temp-file-${{ matrix.offset }}
           path: temp_${{ matrix.offset }}.zip
@@ -47,7 +47,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: List all artifacts
         id: list-artifacts
@@ -59,7 +59,7 @@ jobs:
           cat artifact_names.txt
 
       # - name: Download all artifacts
-      #   uses: actions/download-artifact@v2
+      #   uses: actions/download-artifact@v4
       #   with:
       #     name: temp-file-*
       #     path: artifacts
